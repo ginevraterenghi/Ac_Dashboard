@@ -1,0 +1,230 @@
+body {
+  background: #282828;
+  font-family: -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  Oxygen-Sans,
+  Ubuntu,
+  Cantarell,
+  "Helvetica Neue",
+  sans-serif;
+  color: white;
+}
+
+.navbar {
+  background: #282828;
+  color: black;
+  border-bottom: 1px solid rgba(0,0,0,.1);
+}
+
+.navbar a {
+  color: white;
+}
+
+h1, h2, h4, h5 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+h3 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+hr {
+  margin: 2rem 0;
+}
+
+svg {
+	height: 100%;
+}
+
+.axis path{
+  stroke: #777;
+  stroke-width: 0.5;
+  stroke-dasharray: 2,2;
+}
+
+.axis line {
+/*  fill: none;*/
+  stroke: #777;
+  stroke-width: 0.5;
+  stroke-dasharray: 2,2;
+  shape-rendering: crispEdges;
+}
+
+.domain {
+  stroke: #777;
+  stroke-width: 0.5;
+  stroke-dasharray: 2,2;
+/*  display: none;*/
+}
+
+.tick text {
+  font-size: 0.8rem;
+  font-family: -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  Oxygen-Sans,
+  Ubuntu,
+  Cantarell,
+  "Helvetica Neue",
+  sans-serif;
+}
+
+.yAxis .tick line, .xAxis .tick line {
+  stroke-width: 0.5;
+  stroke: white;
+}
+
+.tick line {
+  stroke-dasharray: 2,2;
+}
+
+.tick text {
+  fill: #777;
+}
+
+.buttons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: column;
+	flex-direction: column;
+  -webkit-box-pack: start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -webkit-box-align: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+  font-size: 0.9rem;
+/*  width: 180px;*/
+}
+
+.buttons p {
+  margin-right: 0.5rem;
+  margin-top: 0rem;
+  margin-bottom: 0.7rem;
+}
+
+button {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid rgba(0,0,0,.3);
+  border-radius: 3px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  font-size: 0.9rem;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  outline: none;
+  margin-bottom: 0.4rem;
+}
+
+button:focus {
+  outline: none;
+}
+
+.circ {
+  -webkit-transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease;
+}
+
+.zero {
+  opacity:0;
+}
+
+
+.circ:hover {
+  cursor: pointer;
+}
+
+.cat {
+  border: 1px solid #fff9bd;
+  background: #282828;
+  color: #fff9bd;
+}
+
+.cat:hover {
+  background: rgba(255, 249, 189, 0.3);
+}
+
+.num {
+  border: 1px solid white;
+  background: #282828;
+  color: white;
+}
+
+.num:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+
+.disabled {
+  pointer-events: none;
+  cursor: normal;
+}
+
+.selected {
+  background: #666;
+  color: white;
+  border: 1px solid white;
+}
+
+.source {
+  font-style: italic;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.box {
+  pointer-events: none;
+}
+
+.info {
+  fill: black;
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.date {
+  font-weight: bold;
+}
+
+
+#killingbees-ui {
+  margin-bottom: 1rem;
+  padding-left: 20px;
+}
+
+.interface-ui {
+	height: 88vh;
+}
+
+#plot-ui {
+	background: #282828;
+	padding: 0;
+}
+
+#elenco-dx {
+  background: #282828;
+	padding: 0;
+}
+
+#elenco-sx {
+  background: #282828;
+	padding: 0;
+}
+
+.container {
+  background: #282828;
+  padding: 0px;	
+}
+
+.row {
+  background: #282828;
+  margin: 20px;	
+}
