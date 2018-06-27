@@ -1,18 +1,15 @@
-var margin = {
-		top: 20,
-		right: 20,
-		bottom: 20,
-		left: 20
-	},
+let margin = {
+	top: 20,
+	right: 20,
+	bottom: 20,
+	left: 20
+};
 
-	let
-		//width = 800,
-		//	height = 800,
-		padding = 50,
-		padding2 = 50,
+let padding = 50,
+	padding2 = 50,
 
-		width = document.querySelector('#plot-ui').offsetWidth - 2 * padding,
-		height = document.querySelector('#plot-ui').offsetHeight - 2 * padding;
+	width = document.querySelector('#plot-ui').offsetWidth - 2 * padding,
+	height = document.querySelector('#plot-ui').offsetHeight - 2 * padding;
 
 let svg = d3.select('#plot-ui').append('svg')
 	.attr('width', width + 2 * padding)
@@ -55,33 +52,37 @@ let coastalScale = d3.scalePoint()
 	.domain(["0", "1"])
 	.range([0, height])
 
-let size = d3.scaleLinear()
-	.range([0.5, 15]);
+let size = d3.scaleSqrt()
+	.range([0.5, 10]);
 
 // starting visualization with:
-let data_set = "start_y";
-let data_setX = "start_x";
+let data_set = "opex";
+let data_setX = "capex";
 
 
 
 // Parse dataset
 
-d3.csv("ac10.csv", function (error, data) {
+d3.csv("DB-0.19.csv", function(error, fullDataset) {
 	if (error) throw error;
 
-	x.domain(d3.extent(data, function (d) {
+	var data = fullDataset.filter(function(d) {
+		return d.year == "2017" && d.month == "8"
+	});
+
+	x.domain(d3.extent(data, function(d) {
 		d[data_setX] = +d[data_setX];
 		return d[data_setX];
 	}));
 
 	// console.log(JSON.stringify(data, null, "\t"));
 
-	y.domain(d3.extent(data, function (d) {
+	y.domain(d3.extent(data, function(d) {
 		d[data_set] = +d[data_set];
 		return d[data_set];
 	}));
 
-	size.domain(d3.extent(data, function (d) {
+	size.domain(d3.extent(data, function(d) {
 			d.client_number = +d.client_number;
 			return d.client_number;
 		}
@@ -93,22 +94,22 @@ d3.csv("ac10.csv", function (error, data) {
 	function tick() {
 
 		d3.selectAll('.circ')
-			.attr('cx', function (d) {
+			.attr('cx', function(d) {
 				return d.x
 			})
-			.attr('cy', function (d) {
+			.attr('cy', function(d) {
 				return d.y
 			})
 
 	};
 
 	// Draw axes
-	var xScale = d3.scaleLinear().range([0, width]).domain(d3.extent(data, function (d) {
+	var xScale = d3.scaleLinear().range([0, width]).domain(d3.extent(data, function(d) {
 		d[data_setX] = +d[data_setX];
 		return d[data_setX];
 	}));
 
-	var yScale = d3.scaleLinear().range([height, 0]).domain(d3.extent(data, function (d) {
+	var yScale = d3.scaleLinear().range([height, 0]).domain(d3.extent(data, function(d) {
 		d[data_set] = +d[data_set];
 		return d[data_set];
 	}));
@@ -157,33 +158,27 @@ d3.csv("ac10.csv", function (error, data) {
 	svg.selectAll('.circ')
 		.data(data)
 		.enter().append('circle').classed('circ', true)
-		.attr('r', function (d) {
+		.attr('r', function(d) {
 			return size(d.client_number)
-		
 		})
-		.attr('cx', function (d) {
+		.attr('cx', function(d) {
 			return width / 2;
 		})
-		.attr('cy', function () {
+		.attr('cy', function() {
 			return height / 2;
 		})
-		.attr("fill", function (d) {
-			return colors(d.dur_number)
+		.attr("fill", function(d) {
+			return colors(d.interruption_class)
 		})
-//	    .style("opacity", 1)
-//
-//
-//		.filter(function(d) { return d.start_x <= 1 })
-//        .style("opacity", .3);
 
 
 
 	// Start force layout
 	let simulation = d3.forceSimulation(data)
-		.force('x', d3.forceX(function (d) {
+		.force('x', d3.forceX(function(d) {
 			return x(d[data_setX])
 		}).strength(0.99))
-		.force('y', d3.forceY(function (d) {
+		.force('y', d3.forceY(function(d) {
 			return y(d[data_set])
 		}).strength(0.99))
 		.force('collide', d3.forceCollide(0))
@@ -192,14 +187,15 @@ d3.csv("ac10.csv", function (error, data) {
 		.on('tick', tick)
 
 	let init_decay;
-	init_decay = setTimeout(function () {
+	init_decay = setTimeout(function() {
 		console.log('init alpha decay')
 		simulation.alphaDecay(0.1);
 	}, 5000);
 
-	d3.selectAll('.circ').on("mouseenter", function (d) {
+	d3.selectAll('.circ').on("mouseenter", function(d) {
 
-		console.log(JSON.stringify(d, null, "\t"));
+		console.log(d);
+		//console.log(JSON.stringify(d, null, "\t"));
 
 	})
 
@@ -218,12 +214,8 @@ d3.csv("ac10.csv", function (error, data) {
 	yButtons.append('button').text('Client number').attr('value', 'client_number').classed('d_sel', true).classed('num', true)
 	//	yButtons.append('button').text('coord-y ITALIA').attr('value', 'coord-y').classed('d_sel', true).classed('num', true)
 	//	yButtons.append('button').text('e-y ITALIA').attr('value', 'e-y').classed('d_sel', true).classed('num', true)
-	yButtons.append('button').text('Opex - Maintenance costs').attr('value', 'opex_generated').classed('d_sel', true).classed('num', true)
-	yButtons.append('button').text('Capex - Quality costs').attr('value', 'capex_generated').classed('d_sel', true).classed('num', true)
-
-
-
-
+	yButtons.append('button').text('Opex - Maintenance costs').attr('value', 'opex').classed('d_sel', true).classed('num', true)
+	yButtons.append('button').text('Capex - Quality costs').attr('value', 'capex').classed('d_sel', true).classed('num', true)
 
 	let xButtons = d3.select('#elenco-sx').append('div').classed('buttons', true);
 	xButtons.append('p').text('X - Value: ')
@@ -238,8 +230,8 @@ d3.csv("ac10.csv", function (error, data) {
 	xButtons.append('button').text('Client number').attr('value', 'client_number').classed('b_sel', true).classed('num', true)
 	//	xButtons.append('button').text('coord-y ITALIA').attr('value', 'coord-y').classed('b_sel', true).classed('num', true)
 	//	xButtons.append('button').text('e-y ITALIA').attr('value', 'e-y').classed('b_sel', true).classed('num', true)
-	xButtons.append('button').text('Opex - Maintenance costs').attr('value', 'opex_generated').classed('b_sel', true).classed('num', true)
-	xButtons.append('button').text('Capex - Quality costs').attr('value', 'capex_generated').classed('b_sel', true).classed('num', true)
+	xButtons.append('button').text('Opex - Maintenance costs').attr('value', 'opex').classed('b_sel', true).classed('num', true)
+	xButtons.append('button').text('Capex - Quality costs').attr('value', 'capex').classed('b_sel', true).classed('num', true)
 
 
 	//"All districts" button
@@ -248,7 +240,7 @@ d3.csv("ac10.csv", function (error, data) {
 	//	xButtons.append().attr('value', 'start_x').classed('d_sel', true).classed('num', true)
 
 	// make buttons interactive, vertical categories
-	d3.selectAll('.d_sel').on('click', function () {
+	d3.selectAll('.d_sel').on('click', function() {
 
 		d3.selectAll('.d_sel').classed('selected', false)
 		d3.select(this).classed('selected', true)
@@ -258,48 +250,48 @@ d3.csv("ac10.csv", function (error, data) {
 		console.log(data_set)
 
 		if (data_set === "mountain_region") {
-			simulation.force('y', d3.forceY(function (d) {
+			simulation.force('y', d3.forceY(function(d) {
 				return mountScale(d[data_set])
 			}))
-			simulation.force('collide', d3.forceCollide(function (d) {
+			simulation.force('collide', d3.forceCollide(function(d) {
 				return size(d.client_number) + 1
 			}).iterations(32))
 		} else if (data_set === "urbanization") {
-			simulation.force('y', d3.forceY(function (d) {
+			simulation.force('y', d3.forceY(function(d) {
 				return urbScale(d[data_set])
 			}))
-			simulation.force('collide', d3.forceCollide(function (d) {
+			simulation.force('collide', d3.forceCollide(function(d) {
 				return size(d.client_number) + 1
 			}).iterations(32))
 		} else if (data_set === "altitude_range") {
-			simulation.force('y', d3.forceY(function (d) {
+			simulation.force('y', d3.forceY(function(d) {
 				return altitudeScale(d[data_set])
 			}))
-			simulation.force('collide', d3.forceCollide(function (d) {
+			simulation.force('collide', d3.forceCollide(function(d) {
 				return size(d.client_number) + 1
 			}).iterations(32))
 		} else if (data_set === "coastal_region") {
-			simulation.force('y', d3.forceY(function (d) {
+			simulation.force('y', d3.forceY(function(d) {
 				return coastalScale(d[data_set])
 			}))
-			simulation.force('collide', d3.forceCollide(function (d) {
+			simulation.force('collide', d3.forceCollide(function(d) {
 				return size(d.client_number) + 1
 			}).iterations(32))
 		} else if (data_set === "area_position") {
-			simulation.force('y', d3.forceY(function (d) {
+			simulation.force('y', d3.forceY(function(d) {
 				return areaScale(d[data_set])
 			}))
-			simulation.force('collide', d3.forceCollide(function (d) {
+			simulation.force('collide', d3.forceCollide(function(d) {
 				return size(d.client_number) + 1
 			}).iterations(32))
 		} else {
 			simulation.force('collide', d3.forceCollide(0))
-			y.domain(d3.extent(data, function (d) {
+			y.domain(d3.extent(data, function(d) {
 				d[data_set] = +d[data_set];
 				return d[data_set];
 			}));
 
-			simulation.force('y', d3.forceY(function (d) {
+			simulation.force('y', d3.forceY(function(d) {
 				return y(d[data_set])
 			}))
 		}
@@ -312,21 +304,21 @@ d3.csv("ac10.csv", function (error, data) {
 	})
 
 	// make buttons interactive, horizontal values
-	d3.selectAll('.b_sel').on('click', function () {
+	d3.selectAll('.b_sel').on('click', function() {
 
 		d3.selectAll('.b_sel').classed('selected', false)
 		d3.select(this).classed('selected', true)
 
 		data_setX = this.value;
 
-		x.domain(d3.extent(data, function (d) {
+		x.domain(d3.extent(data, function(d) {
 			d[data_setX] = +d[data_setX];
 			return d[data_setX];
 		}));
 
 		console.log(data_setX)
 
-		simulation.force('x', d3.forceX(function (d) {
+		simulation.force('x', d3.forceX(function(d) {
 			return x(d[data_setX])
 		}))
 
