@@ -11,6 +11,11 @@ let padding = 50,
 	width = document.querySelector('#plot-ui').offsetWidth - 2 * padding,
 	height = document.querySelector('#plot-ui').offsetHeight - 2 * padding;
 
+let edgeLenght = width < height ? width : height;
+
+width = edgeLenght;
+height = edgeLenght;
+
 let svg = d3.select('#plot-ui').append('svg')
 	.attr('width', width + 2 * padding)
 	.attr('height', height + 2 * padding)
@@ -65,6 +70,10 @@ let data_setX = "capex";
 
 d3.csv("DB-0.19.csv", function(error, fullDataset) {
 	if (error) throw error;
+
+	fullDataset.forEach(function(d){
+		d.zero = 0;
+	})
 
 	var data = fullDataset.filter(function(d) {
 		return d.year == "2017" && d.month == "8"
@@ -203,7 +212,7 @@ d3.csv("DB-0.19.csv", function(error, fullDataset) {
 
 	let yButtons = d3.select('#elenco-dx').append('div').classed('buttons', true);
 	yButtons.append('p').text('Y - Value: ')
-	yButtons.append('button').text('DESELECT').attr('value', 'start_y').classed('d_sel', true).classed('num', true)
+	yButtons.append('button').text('DESELECT').attr('value', 'zero').classed('d_sel', true).classed('num', true)
 	yButtons.append('button').text('Area position').attr('value', 'area_position').classed('d_sel', true).classed('cat', true)
 	yButtons.append('button').text('Altitude range').attr('value', 'altitude_range').classed('d_sel', true).classed('cat', true)
 	yButtons.append('button').text('Mountain region').attr('value', 'mountain_region').classed('d_sel', true).classed('cat', true)
@@ -219,7 +228,7 @@ d3.csv("DB-0.19.csv", function(error, fullDataset) {
 
 	let xButtons = d3.select('#elenco-sx').append('div').classed('buttons', true);
 	xButtons.append('p').text('X - Value: ')
-	xButtons.append('button').text('DESELECT').attr('value', 'start_x').classed('b_sel', true).classed('num', true)
+	xButtons.append('button').text('DESELECT').attr('value', 'zero').classed('b_sel', true).classed('num', true)
 	xButtons.append('button').text('Area position').attr('value', 'area_position').classed('b_sel', true).classed('cat', true)
 	xButtons.append('button').text('Altitude range').attr('value', 'altitude_range').classed('b_sel', true).classed('cat', true)
 	xButtons.append('button').text('Mountain region').attr('value', 'mountain_region').classed('b_sel', true).classed('cat', true)
