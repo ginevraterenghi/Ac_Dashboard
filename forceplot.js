@@ -1,26 +1,28 @@
 let margin = {
-	top: 20,
-	right: 20,
+	top: 0,
+	right: 0,
 	bottom: 20,
-	left: 20
+	left: 200
 };
 
-let padding = 50,
-	padding2 = 50,
+let padding = 50;
 
-	width = document.querySelector('#plot-ui').offsetWidth - 2 * padding,
-	height = document.querySelector('#plot-ui').offsetHeight - 2 * padding;
+// 	let width = document.querySelector('#plot-ui').offsetWidth - 2 * padding,
+// 	height = document.querySelector('#plot-ui').offsetHeight - 2 * padding;
+//
+// let edgeLenght = width < height ? width : height;
+//
+// width = edgeLenght;
+// height = edgeLenght;
 
-let edgeLenght = width < height ? width : height;
-
-width = edgeLenght;
-height = edgeLenght;
+let width = 1860;
+let height = 1860;
 
 let svg = d3.select('#plot-ui').append('svg')
-	.attr('width', width + 2 * padding)
-	.attr('height', height + 2 * padding)
+	.attr('width', width + margin.left + margin.right)
+	.attr('height', height + margin.top + margin.bottom)
 	.append('g')
-	.attr('transform', 'translate(' + padding + ', ' + padding + ')');
+	.attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
 // parse values in dataset
 //let parseDate = d3.timeParse("%Y-%m-%d");
@@ -58,11 +60,18 @@ let coastalScale = d3.scalePoint()
 	.range([0, height])
 
 let size = d3.scaleSqrt()
-	.range([0.5, 10]);
+	//.range([0.5, 10]);
+	.range([3/2,31.5/2])
 
 // starting visualization with:
 let data_set = "opex";
 let data_setX = "capex";
+
+// create scales
+var xScale = d3.scaleLinear().range([0, width]);
+var yScale = d3.scaleLinear().range([height, 0]);
+
+var xAxis, yAxis;
 
 
 
@@ -113,27 +122,29 @@ d3.csv("DB-0.19.csv", function(error, fullDataset) {
 	};
 
 	// Draw axes
-	var xScale = d3.scaleLinear().range([0, width]).domain(d3.extent(data, function(d) {
+	xScale.domain(d3.extent(data, function(d) {
 		d[data_setX] = +d[data_setX];
 		return d[data_setX];
 	}));
 
-	var yScale = d3.scaleLinear().range([height, 0]).domain(d3.extent(data, function(d) {
+	yScale.domain(d3.extent(data, function(d) {
 		d[data_set] = +d[data_set];
 		return d[data_set];
 	}));
 
-	var xAxis = d3.axisBottom()
+	xAxis = d3.axisBottom()
 		.scale(xScale)
-		.tickFormat(d3.format(".0s"))
+		.tickFormat(d3.format(".2s"))
 		//		.ticks(10)
-		.tickPadding(15);
+		.tickPadding(padding)
+		.tickSize(-width);
 
-	var yAxis = d3.axisLeft()
+	yAxis = d3.axisLeft()
 		.scale(yScale)
-		.tickFormat(d3.format(".0s"))
+		.tickFormat(d3.format(".2s"))
 		//		.ticks(10)
-		.tickPadding(15)
+		.tickPadding(padding)
+		.tickSize(-height);
 
 	//drag function
 	//	var dragHandler = d3.drag()
@@ -256,7 +267,15 @@ d3.csv("DB-0.19.csv", function(error, fullDataset) {
 
 		data_set = this.value;
 
-		console.log(data_set)
+		console.log(data_set);
+
+		yScale.domain(d3.extent(data, function(d) {
+			return +d[data_set];
+		}));
+
+		svg.select(".yAxis")
+			.transition(750)
+			.call(yAxis);
 
 		if (data_set === "mountain_region") {
 			simulation.force('y', d3.forceY(function(d) {
@@ -319,6 +338,14 @@ d3.csv("DB-0.19.csv", function(error, fullDataset) {
 		d3.select(this).classed('selected', true)
 
 		data_setX = this.value;
+
+		xScale.domain(d3.extent(data, function(d) {
+			return +d[data_setX];
+		}));
+
+		svg.select(".xAxis")
+			.transition(750)
+			.call(xAxis);
 
 		x.domain(d3.extent(data, function(d) {
 			d[data_setX] = +d[data_setX];
